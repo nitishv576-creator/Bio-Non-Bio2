@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio / Non Bio Classifier</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+
+    <!-- Teachable Machine Image Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest"></script>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Bio / Non Bio Classifier</h1>
+
+    <button id="startBtn">Start Camera</button>
+
+    <div id="webcam-container"></div>
+
+    <div id="prediction">
+        Waiting for camera...
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
