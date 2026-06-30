@@ -1,31 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bio / Non Bio Classifier</title>
+    <title>Waste Segregation Classifier</title>
 
     <link rel="stylesheet" href="style.css">
 
-    <!-- TensorFlow.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+    <!-- TensorFlow -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.7.4/dist/tf.min.js"></script>
 
-    <!-- Teachable Machine Image Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest"></script>
+    <!-- Teachable Machine -->
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
 </head>
 
 <body>
 
 <div class="container">
 
-    <h1>Bio / Non Bio Classifier</h1>
+    <h1>♻ Waste Segregation Classifier</h1>
 
-    <button id="startBtn">Start Camera</button>
+    <p class="subtitle">
+        Upload an image to identify whether the waste is
+        <strong>Biodegradable</strong> or
+        <strong>Non Biodegradable</strong>.
+    </p>
 
-    <div id="webcam-container"></div>
+    <div class="upload-card">
 
-    <div id="prediction">
-        Waiting for camera...
+        <input
+            type="file"
+            id="imageUpload"
+            accept="image/*">
+
+        <img
+            id="preview"
+            src=""
+            alt="Image Preview">
+
+        <button id="predictBtn">
+            Predict Waste Type
+        </button>
+
+        <div id="loading">
+            ⏳ Loading AI Model...
+        </div>
+
+    </div>
+
+    <div id="resultCard">
+
+        <h2>Prediction</h2>
+
+        <div id="prediction">
+
+            No prediction yet.
+
+        </div>
+
+        <div id="confidenceBars">
+
+        </div>
+
     </div>
 
 </div>
@@ -33,4 +70,5 @@
 <script src="script.js"></script>
 
 </body>
+
 </html>

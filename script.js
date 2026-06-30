@@ -1,61 +1,131 @@
+let model;
+
+// Model folder
 const URL = "./model/";
 
-let model;
-let webcam;
-let maxPredictions;
+// HTML Elements
+const imageUpload = document.getElementById("imageUpload");
+const preview = document.getElementById("preview");
+const predictBtn = document.getElementById("predictBtn");
+const prediction = document.getElementById("prediction");
+const confidenceBars = document.getElementById("confidenceBars");
+const loading = document.getElementById("loading");
+const resultCard = document.getElementById("resultCard");
 
-document.getElementById("startBtn").addEventListener("click", init);
+// Load model when page opens
+window.onload = async function () {
 
-async function init() {
+    loading.style.display = "block";
+    predictBtn.disabled = true;
 
-    const modelURL = URL + "model.json";
-    const metadataURL = URL + "metadata.json";
+    try {
 
-    model = await tmImage.load(modelURL, metadataURL);
+        model = await tmImage.load(
+            URL + "model.json",
+            URL + "metadata.json"
+        );
 
-    maxPredictions = model.getTotalClasses();
+        loading.style.display = "none";
+        predictBtn.disabled = false;
 
-    webcam = new tmImage.Webcam(300,300,true);
+        console.log("Model Loaded Successfully");
 
-    await webcam.setup();
+    } catch (err) {
 
-    await webcam.play();
+        loading.innerHTML =
+            "❌ Unable to load the AI model.";
 
-    document.getElementById("webcam-container").innerHTML = "";
+        console.error(err);
+    }
 
-    document
-        .getElementById("webcam-container")
-        .appendChild(webcam.canvas);
+};
 
-    window.requestAnimationFrame(loop);
-}
 
-async function loop(){
+// Preview uploaded image
+imageUpload.addEventListener("change", function (event) {
 
-    webcam.update();
+    const file = event.target.files[0];
 
-    await predict();
+    if (!file) return;
 
-    window.requestAnimationFrame(loop);
-}
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
 
-async function predict(){
+    resultCard.style.display = "none";
 
-    const prediction = await model.predict(webcam.canvas);
+});
 
-    let bestPrediction = prediction[0];
 
-    for(let i=1;i<prediction.length;i++){
+// Predict Button
+predictBtn.addEventListener("click", async () => {
 
-        if(prediction[i].probability > bestPrediction.probability){
-            bestPrediction = prediction[i];
-        }
+    if (!preview.src) {
+
+        alert("Please upload an image first.");
+        return;
 
     }
 
-    document.getElementById("prediction").innerHTML =
-        `
-        <h2>${bestPrediction.className}</h2>
-        <p>Confidence : ${(bestPrediction.probability*100).toFixed(2)}%</p>
+    loading.style.display = "block";
+    resultCard.style.display = "none";
+
+    await predict();
+
+    loading.style.display = "none";
+    resultCard.style.display = "block";
+
+});
+
+
+// Prediction Function
+async function predict() {
+
+    const predictions = await model.predict(preview);
+
+    let highest = predictions[0];
+
+    predictions.forEach(item => {
+
+        if (item.probability > highest.probability)
+            highest = item;
+
+    });
+
+    prediction.innerHTML =
+
+        "Prediction : <br><br><span style='color:green;'>"
+        + highest.className +
+        "</span><br><br>" +
+        (highest.probability * 100).toFixed(2)
+        + "% Confidence";
+
+
+    confidenceBars.innerHTML = "";
+
+    predictions.forEach(item => {
+
+        const percent = (item.probability * 100).toFixed(2);
+
+        confidenceBars.innerHTML += `
+
+        <div class="bar">
+
+            <label>${item.className}</label>
+
+            <div class="progress">
+
+                <div style="width:${percent}%">
+
+                    ${percent}%
+
+                </div>
+
+            </div>
+
+        </div>
+
         `;
+
+    });
+
 }
